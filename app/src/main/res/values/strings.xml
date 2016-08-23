@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">MusicPlayer</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_tracklist">TracklistActivity</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="title_activity_settings">Settings</string>
+    <string name="settings_select_theme_label">Select theme</string>
+    <string name="large_text">some text</string>
+
+    <!-- Strings related to Settings -->
+    <string-array name="pref_list_themes">
+        <item>Dark</item>
+        <item>Light</item>
+    </string-array>
+
+    <string-array name="pref_list_theme_values">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+
+</resources>
