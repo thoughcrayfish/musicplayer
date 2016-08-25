@@ -1,6 +1,7 @@
 package com.example.musicplayerapp.ui.trackList;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -26,11 +27,15 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.musicplayerapp.R;
 import com.example.musicplayerapp.adapters.TracklistAdapter;
+import com.example.musicplayerapp.events.TrackSelectEvent;
 import com.example.musicplayerapp.repository.model.SongObject;
+import com.example.musicplayerapp.repository.service.MusicService;
 import com.example.musicplayerapp.ui.AbstractActivity;
-import com.example.musicplayerapp.ui.settings.SettingsActivity;
 import com.example.musicplayerapp.ui.trackDetail.TrackDetailActivity;
 import com.futuremind.recyclerviewfastscroll.FastScroller;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
 
@@ -40,12 +45,13 @@ import butterknife.OnClick;
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 
 public class TracklistActivity extends AbstractActivity implements TracklistView, NavigationView.OnNavigationItemSelectedListener,
-        TracklistPresenter.OnListGetListener, TracklistPresenter.OnPlayingListener, SeekBar.OnSeekBarChangeListener
+        TracklistPresenter.OnListGetListener, SeekBar.OnSeekBarChangeListener
 {
-    private TracklistPresenterImp presenter;
+    private TracklistPresenter presenter;
     final Context context = this;
     private boolean isPause = false;
     private Handler handler = new Handler();
+    private EventBus bus = EventBus.getDefault();
 
     @BindView(R.id.imageButton_playingRightNow_playPause) ImageButton playPauseButton;
     @BindView(R.id.imageView_currentSong_album_art) ImageView currentSongThumbnail;
@@ -55,13 +61,26 @@ public class TracklistActivity extends AbstractActivity implements TracklistView
     @BindView(R.id.textView_currentSong_artist) TextView currentSongArtist;
     @BindView(R.id.textView_currentSong_title) TextView currentSongTitle;
     @BindView(R.id.relativeLayout_playingRightNow) RelativeLayout playingRightNowView;
+    @BindView(R.id.toolbar) Toolbar toolbar;
+    @BindView(R.id.drawer_layout) DrawerLayout drawer;
+    @BindView(R.id.nav_view) NavigationView navigationView;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tracklist);
         ButterKnife.bind(this);
+        init();
 
+        presenter = new TracklistPresenterImp(this);
+        presenter.createMusicService();
+
+        Intent playIntent = new Intent(context, MusicService.class);
+        presenter.getSongsList(getContentResolver(), this, playIntent, this);
+    }
+
+    private void init()
+    {
         musicSeekBar.setOnTouchListener(new View.OnTouchListener()
         {
             @Override
@@ -70,32 +89,34 @@ public class TracklistActivity extends AbstractActivity implements TracklistView
                 return true;
             }
         });
-
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setItemAnimator(new SlideInUpAnimator(new OvershootInterpolator(1f)));
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        presenter = new TracklistPresenterImp(this);
-        presenter.createMusicService();
-        presenter.getSongsList(context, this);
+    }
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        setMusicSeekBar();
+        checkIfPlaying();
+        bus.register(this);
     }
 
     @Override
-    protected void onStart()
+    protected void onPause()
     {
-        super.onStart();
-        setMusicSeekBar();
-        checkIfPlaying();
+        super.onPause();
+        bus.unregister(this);
+    }
+    @Subscribe
+    public void onEvent(TrackSelectEvent event)
+    {
+        playSong(event.getTrackSelectedNumber());
     }
 
     @OnClick({R.id.imageButton_playingRightNow_playPause, R.id.relativeLayout_playingRightNow})
@@ -105,14 +126,9 @@ public class TracklistActivity extends AbstractActivity implements TracklistView
             switch (view.getId())
             {
                 case R.id.imageButton_playingRightNow_playPause:
-                    if (!isPause)
-                    {
-                        presenter.pauseTrack();
-                    }
-                    else
-                    {
-                        presenter.resumeTrack();
-                    }
+                    if (!isPause) presenter.pauseTrack();
+                    else presenter.resumeTrack();
+
                     checkIfPlaying();
                     break;
 
@@ -124,7 +140,9 @@ public class TracklistActivity extends AbstractActivity implements TracklistView
     }
     void checkIfPlaying()
     {
-        presenter.checkIfPlaying(this);
+        boolean isPlaying = presenter.checkIfPlaying();
+        if (isPlaying) onPlaying();
+        else onPaused();
     }
     void setMusicSeekBar()
     {
@@ -133,7 +151,7 @@ public class TracklistActivity extends AbstractActivity implements TracklistView
             @Override
             public void run()
             {
-                if(presenter.musicService != null)
+                if(presenter.getMusicService() != null)
                 {
                     int mCurrentPosition = presenter.getSongDuration();
                     musicSeekBar.setProgress(mCurrentPosition);
@@ -148,7 +166,7 @@ public class TracklistActivity extends AbstractActivity implements TracklistView
     {
         if (fromUser)
         {
-            if(presenter.musicService != null)
+            if(presenter.getMusicService() != null)
             {
                 presenter.setSongDuration(progress);
             }
@@ -181,7 +199,7 @@ public class TracklistActivity extends AbstractActivity implements TracklistView
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings)
         {
-            startActivity(SettingsActivity.class, false, null, null);
+//            startActivity(SettingsActivity.class, false, null, null);
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -211,10 +229,9 @@ public class TracklistActivity extends AbstractActivity implements TracklistView
         loadTrackDetailActivity();
     }
 
-    @Override
     public void loadTrackDetailActivity()
     {
-        startActivity(TrackDetailActivity.class, false, null, null);
+        startActivity(TrackDetailActivity.class, false);
     }
     @Override
     public void playSong(int songIndex)
@@ -237,10 +254,10 @@ public class TracklistActivity extends AbstractActivity implements TracklistView
     @Override
     public void onSuccess(ArrayList<SongObject> songsList)
     {
-        TracklistAdapter songsAdapter = new TracklistAdapter(this, TracklistActivity.this, songsList);
+        TracklistAdapter songsAdapter = new TracklistAdapter(this, songsList);
         recyclerView.setAdapter(songsAdapter);
         fastScroller.setRecyclerView(recyclerView);
-        presenter.checkIfPlaying(this);
+        checkIfPlaying();
     }
 
     @Override
@@ -249,14 +266,12 @@ public class TracklistActivity extends AbstractActivity implements TracklistView
         // todo
     }
 
-    @Override
     public void onPlaying()
     {
         isPause = false;
         playPauseButton.setImageResource(R.drawable.ic_pause_circle_outline_white_24dp);
     }
 
-    @Override
     public void onPaused()
     {
         isPause = true;

@@ -1,6 +1,9 @@
 package com.example.musicplayerapp.ui.trackDetail;
 
+import android.app.Activity;
 import android.widget.SeekBar;
+
+import com.example.musicplayerapp.repository.service.MusicService;
 
 public interface TrackDetailPresenter
 {
@@ -11,6 +14,11 @@ public interface TrackDetailPresenter
     void playTrack();
     void toggleShuffle();
 
+    void bindMusicService(Activity activity);
+    MusicService getMusicService();
+    int getSongDuration();
+    void setSongDuration(Integer progress);
+
     interface shuffleToggleListener
     {
         void shuffleEnabled();
@@ -18,11 +26,5 @@ public interface TrackDetailPresenter
     }
     void checkIfShuffle(shuffleToggleListener listener);
 
-    void checkIfPlaying(OnPlayingListener listener);
-    interface OnPlayingListener
-    {
-        void onPlaying();
-        void onPaused();
-    }
-
+    boolean checkIfPlaying();
 }

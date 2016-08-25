@@ -6,8 +6,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.storage.StorageVolume;
-import android.provider.MediaStore;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -32,7 +30,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class TrackDetailActivity extends AbstractActivity implements TrackDetailView, SeekBar.OnSeekBarChangeListener, TrackDetailPresenter.OnPlayingListener
+public class TrackDetailActivity extends AbstractActivity implements TrackDetailView, SeekBar.OnSeekBarChangeListener
     , TrackDetailPresenter.shuffleToggleListener
 {
     @BindView(R.id.imageButton_playerControls_playPause) ImageButton playPauseButton;
@@ -49,7 +47,7 @@ public class TrackDetailActivity extends AbstractActivity implements TrackDetail
 
     Bitmap bitmap;
     private boolean isPause = false;
-    TrackDetailPresenterImp presenter;
+    TrackDetailPresenter presenter;
     private Handler handler = new Handler();
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -68,7 +66,7 @@ public class TrackDetailActivity extends AbstractActivity implements TrackDetail
     {
         super.onStart();
         presenter = new TrackDetailPresenterImp(this);
-        presenter.bindMusicService();
+        presenter.bindMusicService(this);
 
         // Updating song progress bar through requesting duration from presenter // - maybe move to presenter?
         musicSeekBar.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener()
@@ -89,7 +87,7 @@ public class TrackDetailActivity extends AbstractActivity implements TrackDetail
             @Override
             public void run()
             {
-                if(presenter.musicService != null)
+                if(presenter.getMusicService() != null)
                 {
                     int mCurrentPosition = presenter.getSongDuration();
                     musicSeekBar.setProgress(mCurrentPosition);
@@ -137,19 +135,15 @@ public class TrackDetailActivity extends AbstractActivity implements TrackDetail
     }
     protected void animateButtons()
     {
-        Animation animScale, animAlpha;
-        animScale = AnimationUtils.loadAnimation(this, R.anim.play_button_scale_anim);
-        animAlpha = AnimationUtils.loadAnimation(this, R.anim.buttons_alpha_anim);
-        playPauseButton.startAnimation(animScale);
-        previousButton.startAnimation(animAlpha);
-        nextButton.startAnimation(animAlpha);
-        backButton.startAnimation(animAlpha);
-        shuffleButton.startAnimation(animAlpha);
+        animateScale(playPauseButton);
+        animateAlpha(previousButton);
+        animateAlpha(nextButton);
+        animateAlpha(backButton);
+        animateAlpha(shuffleButton);
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
     {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_track, menu);
         return true;
     }
@@ -157,12 +151,7 @@ public class TrackDetailActivity extends AbstractActivity implements TrackDetail
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings)
         {
             return true;
@@ -175,7 +164,7 @@ public class TrackDetailActivity extends AbstractActivity implements TrackDetail
     {
         if (fromUser)
         {
-            if(presenter.musicService != null)
+            if(presenter.getMusicService() != null)
             {
                 presenter.setSongDuration(progress);
             }
@@ -189,7 +178,6 @@ public class TrackDetailActivity extends AbstractActivity implements TrackDetail
         songDurationView.setText(duration);
 
         checkIfShuffle();
-//        albumArtView.setImageResource(R.drawable.ic_stop_white_24dp);
         try
         {
             bitmap = Utils.getThumbnail(this, albumArt);
@@ -202,28 +190,24 @@ public class TrackDetailActivity extends AbstractActivity implements TrackDetail
                 .error(R.drawable.ic_menu_camera)
                 .centerCrop().into(albumArtView);
     }
-    void setTransluscentStatusBar()
-    {
-        getWindow().getDecorView().setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-    }
+
     void checkIfShuffle()
     {
         presenter.checkIfShuffle(this);
     }
     void checkIfPlaying()
     {
-        presenter.checkIfPlaying(this);
+        boolean isPlaying = presenter.checkIfPlaying();
+        if (isPlaying) onPlaying();
+        else onPaused();
     }
-    @Override
+
     public void onPlaying()
     {
         isPause = false;
         playPauseButton.setImageResource(R.drawable.ic_pause_white_36dp);
     }
 
-    @Override
     public void onPaused()
     {
         isPause = true;

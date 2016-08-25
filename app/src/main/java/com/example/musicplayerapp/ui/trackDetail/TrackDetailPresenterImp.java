@@ -1,5 +1,6 @@
 package com.example.musicplayerapp.ui.trackDetail;
 
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -14,30 +15,31 @@ public class TrackDetailPresenterImp implements TrackDetailPresenter
 {
     boolean bound = false;
     public MusicService musicService;
-    TrackDetailActivity view;
-    TrackDetailInteractorImp interactor;
+    TrackDetailView view;
+    TrackDetailInteractor interactor;
 
     @Override
-    public void checkIfPlaying(TrackDetailPresenter.OnPlayingListener listener)
+    public boolean checkIfPlaying()
     {
-        if (musicService != null)
-        {
-            boolean isPlaying = musicService.isPng();
-            if (isPlaying)
-                listener.onPlaying();
-
-            else listener.onPaused();
-        }
+        return musicService != null && musicService.isPng();
     }
 
-    public void bindMusicService()
+    @Override
+    public void bindMusicService(Activity activity)
     {
         if (musicService == null)
         {
-            Intent intent = new Intent(view, MusicService.class);
-            view.bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+            Intent intent = new Intent(activity, MusicService.class);
+            activity.bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
         }
     }
+
+    @Override
+    public MusicService getMusicService()
+    {
+        return musicService;
+    }
+
     public TrackDetailPresenterImp (TrackDetailActivity view)
     {
         this.view = view;
@@ -119,10 +121,12 @@ public class TrackDetailPresenterImp implements TrackDetailPresenter
         else listener.shuffleDisabled();
     }
 
-    public Integer getSongDuration()
+    @Override
+    public int getSongDuration()
     {
         return musicService.getPosn() / 1000;
     }
+    @Override
     public void setSongDuration(Integer progress)
     {
         musicService.changeSongPosition(progress * 1000);

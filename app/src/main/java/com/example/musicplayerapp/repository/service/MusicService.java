@@ -26,74 +26,48 @@ public class MusicService extends Service implements
         MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener,
         MediaPlayer.OnCompletionListener
 {
-
-    //media player
     private MediaPlayer player;
-    //song list
     private ArrayList<SongObject> songs;
-    //current position
     private int songPosn;
-    //binder
     private final IBinder musicBind = new MusicBinder();
-    //title of current song
     private String songTitle="";
-    //notification id
     private static final int NOTIFY_ID=1;
-    //shuffle flag and random
     private boolean shuffle=false;
     private Random rand;
 
     @Override
     public void onCreate()
     {
-        //create the service
         super.onCreate();
-        //initialize position
         songPosn=0;
-        //random
         rand=new Random();
-        //create player
         player = new MediaPlayer();
-        //initialize
+
         initMusicPlayer();
     }
 
-
     public void initMusicPlayer()
     {
-        //set player properties
         player.setWakeMode(getApplicationContext(),
                 PowerManager.PARTIAL_WAKE_LOCK);
         player.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        //set listeners
+
         player.setOnPreparedListener(this);
         player.setOnCompletionListener(this);
         player.setOnErrorListener(this);
     }
 
-    //pass song list
     public void setList(ArrayList<SongObject> theSongs)
     {
         songs=theSongs;
     }
 
-    //binder
-    public class MusicBinder extends Binder
-    {
-        public MusicService getService()
-        {
-            return MusicService.this;
-        }
-    }
-
-    //activity will bind to service
     @Override
     public IBinder onBind(Intent intent)
     {
         return musicBind;
     }
 
-    //release resources when unbind
     @Override
     public boolean onUnbind(Intent intent)
     {
@@ -102,22 +76,15 @@ public class MusicService extends Service implements
         return false;
     }
 
-    //play a song
     public void playSong()
     {
-        //play
         player.reset();
-        //get song
         SongObject playSong = songs.get(songPosn);
-        //get title
         songTitle=playSong.getTitle();
-        //get id
         long currSong = playSong.getId();
-        //set uri
         Uri trackUri = ContentUris.withAppendedId(
                 android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
                 currSong);
-        //set the data source
         try
         {
             player.setDataSource(getApplicationContext(), trackUri);
@@ -129,7 +96,6 @@ public class MusicService extends Service implements
         player.prepareAsync();
     }
 
-    //set the song
     public void setSong(int songIndex)
     {
         songPosn=songIndex;
@@ -141,7 +107,7 @@ public class MusicService extends Service implements
         //check if playback has reached the end of a track
         if(player.getCurrentPosition()>0)
         {
-
+            playNext();
         }
     }
 
@@ -157,9 +123,7 @@ public class MusicService extends Service implements
     @Override
     public void onPrepared(MediaPlayer mp)
     {
-        //start playback
         mp.start();
-        //notification
         Intent notIntent = new Intent(this, TracklistActivity.class);
         notIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendInt = PendingIntent.getActivity(this, 0,
@@ -177,7 +141,6 @@ public class MusicService extends Service implements
         startForeground(NOTIFY_ID, not);
     }
 
-    //playback methods
     public int getPosn()
     {
         if (player != null)
@@ -192,10 +155,7 @@ public class MusicService extends Service implements
 
     public boolean isPng()
     {
-        if (player != null)
-        return player.isPlaying();
-
-        else return false;
+        return player != null && player.isPlaying();
     }
 
     public void pausePlayer()
@@ -213,7 +173,6 @@ public class MusicService extends Service implements
         player.start();
     }
 
-    //skip to previous track
     public void playPrev()
     {
         songPosn--;
@@ -221,7 +180,6 @@ public class MusicService extends Service implements
         playSong();
     }
 
-    //skip to next
     public void playNext()
     {
         if(shuffle)
@@ -247,11 +205,9 @@ public class MusicService extends Service implements
         stopForeground(true);
     }
 
-    //toggle shuffle
     public void setShuffle()
     {
-        if(shuffle) shuffle=false;
-        else shuffle=true;
+        shuffle = !shuffle;
     }
     public boolean getShuffle()
     {
@@ -262,6 +218,15 @@ public class MusicService extends Service implements
         if (songs != null)
         return songs.get(songPosn);
         else return null;
+    }
+
+    // inner classes
+    public class MusicBinder extends Binder
+    {
+        public MusicService getService()
+        {
+            return MusicService.this;
+        }
     }
 
 }

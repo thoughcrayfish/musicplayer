@@ -8,7 +8,6 @@ import java.util.ArrayList;
 
 public interface TracklistView
 {
-    void loadTrackDetailActivity();
     void playSong(int songIndex);
 
     void showCurrentPlayingSong(String artistName, String songName, Uri albumArt);

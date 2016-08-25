@@ -24,16 +24,17 @@ public class TracklistPresenterImp implements TracklistPresenter
     public MusicService musicService;
     private Intent playIntent;
     private boolean musicBound=false;
-    private TracklistActivity view;
-    private TracklistInteractorImp interactor;
+    private TracklistView view;
+    private TracklistInteractor interactor;
     private ArrayList<SongObject> songsList = new ArrayList<SongObject>();
 
-    public TracklistPresenterImp (TracklistActivity view)
+    public TracklistPresenterImp (TracklistView view)
     {
         this.view = view;
         interactor = new TracklistInteractorImp();
     }
 
+    @Override
     public void updateCurrentSongView()
     {
         view.showCurrentPlayingSong(musicService.getCurrentSong().getArtist(),
@@ -41,25 +42,18 @@ public class TracklistPresenterImp implements TracklistPresenter
         musicService.getCurrentSong().getArtUri());
     }
 
+    @Override
     public void createMusicService()
     {
         if (musicService == null)
         {
             musicService = new MusicService();
-//            bindMusicService();
         }
-    }
-    public void bindMusicService()
-    {
-        Intent intent = new Intent(view, MusicService.class);
-        view.bindService(intent, musicConnection, Context.BIND_AUTO_CREATE);
-        musicBound = true;
     }
 
     @Override
-    public void getSongsList(Context context, final TracklistPresenter.OnListGetListener listener)
+    public void getSongsList(ContentResolver musicResolver, final TracklistPresenter.OnListGetListener listener, Intent intent, Activity activity)
     {
-        ContentResolver musicResolver = context.getContentResolver();
         Uri musicUri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
         Cursor musicCursor = musicResolver.query(musicUri, null, null, null, null);
 
@@ -87,12 +81,10 @@ public class TracklistPresenterImp implements TracklistPresenter
                 // grabbing art for track
                 Uri uri = ContentUris.withAppendedId(Application.artworkUri,
                         albumId);
-                // getting Bitmap
 
                 // adding final object to the array
                 songsList.add(new SongObject(thisId, thisArtist, thisTitle, thisAlbum, thisSongDuration, uri));
             }
-//            long id, String artist, String title, String album, long duration
             while (musicCursor.moveToNext());
 
             if (songsList != null)
@@ -103,9 +95,10 @@ public class TracklistPresenterImp implements TracklistPresenter
 
             if(playIntent == null)
             {
-                playIntent = new Intent(context, MusicService.class);
-                context.bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
-                context.startService(playIntent);
+                this.playIntent = intent;
+//                playIntent = new Intent(context, MusicService.class);
+                activity.bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
+                musicService.startService(playIntent);
             }
         }
     }
@@ -127,21 +120,24 @@ public class TracklistPresenterImp implements TracklistPresenter
     }
 
     @Override
-    public void checkIfPlaying(OnPlayingListener listener)
+    public boolean checkIfPlaying()
     {
-        if (musicService != null)
-        {
-            boolean isPlaying = musicService.isPng();
-            if (isPlaying)
-                listener.onPlaying();
-            else listener.onPaused();
-        }
+        return musicService != null && musicService.isPng();
     }
 
-    public Integer getSongDuration()
+    @Override
+    public int getSongDuration()
     {
         return musicService.getPosn() / 1000;
     }
+
+    @Override
+    public MusicService getMusicService()
+    {
+        return musicService;
+    }
+
+    @Override
     public void setSongDuration(int progress)
     {
         musicService.changeSongPosition(progress * 1000);
