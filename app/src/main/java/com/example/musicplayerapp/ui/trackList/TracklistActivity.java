@@ -32,6 +32,7 @@ import com.example.musicplayerapp.repository.model.SongObject;
 import com.example.musicplayerapp.repository.service.MusicService;
 import com.example.musicplayerapp.ui.AbstractActivity;
 import com.example.musicplayerapp.ui.trackDetail.TrackDetailActivity;
+import com.example.musicplayerapp.utils.Utils;
 import com.futuremind.recyclerviewfastscroll.FastScroller;
 
 import org.greenrobot.eventbus.EventBus;
@@ -116,13 +117,7 @@ public class TracklistActivity extends AbstractActivity implements TracklistView
         super.onPause();
         bus.unregister(this);
     }
-    @Override
-    protected void onStop()
-    {
-        super.onStop();
-//        if (presenter.getMusicService()!= null)
-//        presenter.unBindMusicService(this);
-    }
+
     @Subscribe
     public void onEvent(TrackSelectEvent event)
     {
@@ -255,10 +250,7 @@ public class TracklistActivity extends AbstractActivity implements TracklistView
     {
         currentSongTitle.setText(songName);
         currentSongArtist.setText(artistName);
-        Glide.with(this).load(albumArt)
-                .placeholder(R.drawable.ic_menu_camera)
-                .error(R.drawable.ic_menu_manage)
-                .crossFade().centerCrop().into(currentSongThumbnail);
+        Utils.loadRoundPicture(this, albumArt, currentSongThumbnail);
     }
 
     @Override

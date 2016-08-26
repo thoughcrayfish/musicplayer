@@ -31,7 +31,6 @@ public class TrackDetailPresenterImp implements TrackDetailPresenter
         {
             Intent intent = new Intent(activity, MusicService.class);
             activity.bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-//            activity.startService(intent);
         }
     }
 
@@ -64,6 +63,7 @@ public class TrackDetailPresenterImp implements TrackDetailPresenter
                     musicService.getCurrentSong().getTitle(),
                     Utils.musicServiceTimeConverter(musicService.getCurrentSong().getDuration()),
                     musicService.getCurrentSong().getArtUri());
+
         }
         catch (Exception e)
         {

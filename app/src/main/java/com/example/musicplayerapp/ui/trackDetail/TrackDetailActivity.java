@@ -10,8 +10,6 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewTreeObserver;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -19,13 +17,8 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
 import com.example.musicplayerapp.R;
 import com.example.musicplayerapp.ui.AbstractActivity;
-import com.example.musicplayerapp.utils.LoggingListener;
 import com.example.musicplayerapp.utils.Utils;
 
 import java.io.IOException;
@@ -50,7 +43,7 @@ public class TrackDetailActivity extends AbstractActivity implements TrackDetail
     @BindView(R.id.seekBar_playerControl) SeekBar musicSeekBar;
 
     Bitmap bitmap;
-//    private boolean isPause;
+    private boolean isPause;
     TrackDetailPresenter presenter;
     private Handler handler = new Handler();
     @Override
@@ -63,7 +56,6 @@ public class TrackDetailActivity extends AbstractActivity implements TrackDetail
 
         animateButtons();
         setTransluscentStatusBar();
-
     }
 
     @Override
@@ -105,18 +97,6 @@ public class TrackDetailActivity extends AbstractActivity implements TrackDetail
     }
 
     @Override
-    protected void onResume()
-    {
-        super.onResume();
-        checkIfPlaying();
-    }
-
-    @Override
-    protected void onPause()
-    {
-        super.onPause();
-    }
-    @Override
     protected void onStop()
     {
         super.onStop();
@@ -131,14 +111,14 @@ public class TrackDetailActivity extends AbstractActivity implements TrackDetail
             switch (view.getId())
             {
                 case R.id.imageButton_playerControls_playPause:
-//                    if (!isPause)
-//                    {
-//                        presenter.pauseTrack();
-//                    }
-//                    else
-//                    {
-//                        presenter.playTrack();
-//                    }
+                    if (!isPause)
+                    {
+                        presenter.pauseTrack();
+                    }
+                    else
+                    {
+                        presenter.playTrack();
+                    }
                     break;
                 case R.id.imageButton_playerControls_next:
                     presenter.nextTrack();
@@ -203,7 +183,7 @@ public class TrackDetailActivity extends AbstractActivity implements TrackDetail
         songNameView.setText(songName);
         artistNameView.setText(artistName);
         songDurationView.setText(duration);
-
+        checkIfPlaying();
         checkIfShuffle();
         try
         {
@@ -213,11 +193,7 @@ public class TrackDetailActivity extends AbstractActivity implements TrackDetail
             e.printStackTrace();
         }
 
-
-        Glide.with(this).load(albumArt).placeholder(R.drawable.abstract_roh)
-               .listener(new LoggingListener<Uri, GlideDrawable>())
-                .error(R.drawable.ic_menu_camera)
-                .centerCrop().into(albumArtView);
+        Utils.loadSquarePicture(this, albumArt, albumArtView);
     }
 
     void checkIfShuffle()
@@ -233,13 +209,13 @@ public class TrackDetailActivity extends AbstractActivity implements TrackDetail
 
     public void onPlaying()
     {
-//        isPause = false;
+        isPause = false;
         playPauseButton.setImageResource(R.drawable.ic_pause_white_36dp);
     }
 
     public void onPaused()
     {
-//        isPause = true;
+        isPause = true;
         playPauseButton.setImageResource(R.drawable.ic_play_arrow_white_36dp);
     }
 

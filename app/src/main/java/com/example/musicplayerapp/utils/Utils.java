@@ -1,17 +1,21 @@
 package com.example.musicplayerapp.utils;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.example.musicplayerapp.R;
 import com.example.musicplayerapp.app.Application;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+
 
 public class Utils
 {
@@ -103,4 +107,22 @@ public class Utils
         else return k;
     }
 
+    public static void loadRoundPicture(Context context, Uri uri, ImageView imageView)
+    {
+        Glide.with(context)
+                .load(uri)
+                .centerCrop()
+                .placeholder(R.drawable.ic_menu_camera)
+                .transform(new CircleTransform(context))
+                .into(imageView);
+    }
+
+    public static void loadSquarePicture(Context context, Uri uri, ImageView imageView)
+    {
+        Glide.with(context)
+                .load(uri)
+                .fitCenter()
+                .placeholder(R.drawable.ic_menu_camera)
+                .into(imageView);
+    }
 }
