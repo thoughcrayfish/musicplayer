@@ -24,30 +24,27 @@ import java.util.Random;
 
 public class MusicService extends Service implements
         MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener,
-        MediaPlayer.OnCompletionListener
-{
+        MediaPlayer.OnCompletionListener {
     private MediaPlayer player;
     private ArrayList<SongObject> songs;
     private int songPosn;
     private final IBinder musicBind = new MusicBinder();
-    private String songTitle="";
-    private static final int NOTIFY_ID=1;
-    private boolean shuffle=false;
+    private String songTitle = "";
+    private static final int NOTIFY_ID = 1;
+    private boolean shuffle = false;
     private Random rand;
 
     @Override
-    public void onCreate()
-    {
+    public void onCreate() {
         super.onCreate();
-        songPosn=0;
-        rand=new Random();
+        songPosn = 0;
+        rand = new Random();
         player = new MediaPlayer();
 
         initMusicPlayer();
     }
 
-    public void initMusicPlayer()
-    {
+    public void initMusicPlayer() {
         player.setWakeMode(getApplicationContext(),
                 PowerManager.PARTIAL_WAKE_LOCK);
         player.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -57,63 +54,52 @@ public class MusicService extends Service implements
         player.setOnErrorListener(this);
     }
 
-    public void setList(ArrayList<SongObject> theSongs)
-    {
-        songs=theSongs;
+    public void setList(ArrayList<SongObject> theSongs) {
+        songs = theSongs;
     }
 
     @Override
-    public IBinder onBind(Intent intent)
-    {
+    public IBinder onBind(Intent intent) {
         return musicBind;
     }
 
     @Override
-    public boolean onUnbind(Intent intent)
-    {
+    public boolean onUnbind(Intent intent) {
         player.stop();
         player.release();
         return false;
     }
 
-    public void playSong()
-    {
+    public void playSong() {
         player.reset();
         SongObject playSong = songs.get(songPosn);
-        songTitle=playSong.getTitle();
+        songTitle = playSong.getTitle();
         long currSong = playSong.getId();
         Uri trackUri = ContentUris.withAppendedId(
                 android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
                 currSong);
-        try
-        {
+        try {
             player.setDataSource(getApplicationContext(), trackUri);
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             Log.e("MUSIC SERVICE", "Error setting data source", e);
         }
         player.prepareAsync();
     }
 
-    public void setSong(int songIndex)
-    {
-        songPosn=songIndex;
+    public void setSong(int songIndex) {
+        songPosn = songIndex;
     }
 
     @Override
-    public void onCompletion(MediaPlayer mp)
-    {
+    public void onCompletion(MediaPlayer mp) {
         //check if playback has reached the end of a track
-        if(player.getCurrentPosition()>0)
-        {
+        if (player.getCurrentPosition() > 0) {
             playNext();
         }
     }
 
     @Override
-    public boolean onError(MediaPlayer mp, int what, int extra)
-    {
+    public boolean onError(MediaPlayer mp, int what, int extra) {
         Log.v("MUSIC PLAYER", "Playback Error");
         mp.reset();
         return false;
@@ -121,8 +107,7 @@ public class MusicService extends Service implements
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @Override
-    public void onPrepared(MediaPlayer mp)
-    {
+    public void onPrepared(MediaPlayer mp) {
         mp.start();
         Intent notIntent = new Intent(this, TracklistActivity.class);
         notIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -141,90 +126,74 @@ public class MusicService extends Service implements
         startForeground(NOTIFY_ID, not);
     }
 
-    public int getPosn()
-    {
+    public int getPosn() {
         if (player != null)
-        return player.getCurrentPosition();
+            return player.getCurrentPosition();
         else return 0;
     }
 
-    public int getDur()
-    {
+    public int getDur() {
         return player.getDuration();
     }
 
-    public boolean isPng()
-    {
+    public boolean isPng() {
         return player != null && player.isPlaying();
     }
 
-    public void pausePlayer()
-    {
+    public void pausePlayer() {
         player.pause();
     }
 
-    public void changeSongPosition(int posn)
-    {
+    public void changeSongPosition(int posn) {
         player.seekTo(posn);
     }
 
-    public void go()
-    {
+    public void go() {
         player.start();
     }
 
-    public void playPrev()
-    {
+    public void playPrev() {
         songPosn--;
-        if(songPosn<0) songPosn=songs.size()-1;
+        if (songPosn < 0) songPosn = songs.size() - 1;
         playSong();
     }
 
-    public void playNext()
-    {
-        if(shuffle)
-        {
+    public void playNext() {
+        if (shuffle) {
             int newSong = songPosn;
-            while(newSong==songPosn)
-            {
-                newSong=rand.nextInt(songs.size());
+            while (newSong == songPosn) {
+                newSong = rand.nextInt(songs.size());
             }
-            songPosn=newSong;
-        }
-        else
-        {
+            songPosn = newSong;
+        } else {
             songPosn++;
-            if(songPosn>=songs.size()) songPosn=0;
+            if (songPosn >= songs.size()) songPosn = 0;
         }
         playSong();
     }
 
     @Override
-    public void onDestroy()
-    {
+    public void onDestroy() {
         stopForeground(true);
     }
 
-    public void setShuffle()
-    {
+    public void setShuffle() {
         shuffle = !shuffle;
     }
-    public boolean getShuffle()
-    {
+
+    public boolean getShuffle() {
         return shuffle;
     }
-    public SongObject getCurrentSong()
-    {
+
+    public SongObject getCurrentSong() {
         if (songs != null)
-        return songs.get(songPosn);
+            return songs.get(songPosn);
         else return null;
     }
 
     // inner classes
-    public class MusicBinder extends Binder
-    {
-        public MusicService getService()
-        {
+    public class MusicBinder extends Binder {
+        public MusicService getService() {
             return MusicService.this;
         }
     }

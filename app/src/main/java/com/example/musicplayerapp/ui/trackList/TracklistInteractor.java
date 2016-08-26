@@ -7,7 +7,6 @@ import com.example.musicplayerapp.repository.model.SongObject;
 
 import java.util.ArrayList;
 
-public interface TracklistInteractor
-{
+public interface TracklistInteractor {
 
 }

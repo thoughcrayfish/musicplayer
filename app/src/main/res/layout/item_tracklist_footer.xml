@@ -28,8 +28,7 @@
         android:layout_height="@dimen/playback_controls_albumart_size"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/seekBar_currentSong"
-        android:scaleType="centerCrop"
-       />
+        android:scaleType="centerCrop" />
 
     <LinearLayout
         android:id="@+id/content"

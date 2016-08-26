@@ -20,7 +20,6 @@ import com.example.musicplayerapp.repository.service.MusicService;
 import java.io.FileDescriptor;
 import java.util.ArrayList;
 
-public class TracklistInteractorImp implements TracklistInteractor
-{
+public class TracklistInteractorImp implements TracklistInteractor {
 
 }

@@ -12,20 +12,17 @@ import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
 /**
  * Created by Андрей on 26.08.2016.
  */
-public class CircleTransform extends BitmapTransformation
-{
-    public CircleTransform(Context context)
-    {
+public class CircleTransform extends BitmapTransformation {
+    public CircleTransform(Context context) {
         super(context);
     }
 
-    @Override protected Bitmap transform(BitmapPool pool, Bitmap toTransform, int outWidth, int outHeight)
-    {
+    @Override
+    protected Bitmap transform(BitmapPool pool, Bitmap toTransform, int outWidth, int outHeight) {
         return circleCrop(pool, toTransform);
     }
 
-    private static Bitmap circleCrop(BitmapPool pool, Bitmap source)
-    {
+    private static Bitmap circleCrop(BitmapPool pool, Bitmap source) {
         if (source == null) return null;
 
         int size = Math.min(source.getWidth(), source.getHeight());
@@ -46,8 +43,8 @@ public class CircleTransform extends BitmapTransformation
         return result;
     }
 
-    @Override public String getId()
-    {
+    @Override
+    public String getId() {
         return getClass().getName();
     }
 }

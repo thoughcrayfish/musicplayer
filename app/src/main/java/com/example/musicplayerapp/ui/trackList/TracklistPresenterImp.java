@@ -18,62 +18,51 @@ import com.example.musicplayerapp.repository.service.MusicService;
 
 import java.util.ArrayList;
 
-public class TracklistPresenterImp implements TracklistPresenter
-{
+public class TracklistPresenterImp implements TracklistPresenter {
 
     public MusicService musicService;
     private Intent playIntent;
-    private boolean musicBound=false;
+    private boolean musicBound = false;
     private TracklistView view;
     private TracklistInteractor interactor;
     private ArrayList<SongObject> songsList = new ArrayList<SongObject>();
 
-    public TracklistPresenterImp (TracklistView view)
-    {
+    public TracklistPresenterImp(TracklistView view) {
         this.view = view;
         interactor = new TracklistInteractorImp();
     }
 
     @Override
-    public void updateCurrentSongView()
-    {
-        try
-        {
+    public void updateCurrentSongView() {
+        try {
             view.showCurrentPlayingSong(musicService.getCurrentSong().getArtist(),
                     musicService.getCurrentSong().getTitle(),
                     musicService.getCurrentSong().getArtUri());
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
         }
     }
 
     @Override
-    public void createMusicService()
-    {
-        if (musicService == null)
-        {
+    public void createMusicService() {
+        if (musicService == null) {
             musicService = new MusicService();
         }
     }
+
     @Override
-    public void unBindMusicService(Activity activity)
-    {
-        if (musicService != null)
-        {
+    public void unBindMusicService(Activity activity) {
+        if (musicService != null) {
             Intent intent = new Intent(activity, MusicService.class);
             musicService.onUnbind(intent);
         }
     }
 
     @Override
-    public void getSongsList(ContentResolver musicResolver, final TracklistPresenter.OnListGetListener listener)
-    {
+    public void getSongsList(ContentResolver musicResolver, final TracklistPresenter.OnListGetListener listener) {
         Uri musicUri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
         Cursor musicCursor = musicResolver.query(musicUri, null, null, null, null);
 
-        if(musicCursor!=null && musicCursor.moveToFirst())
-        {
+        if (musicCursor != null && musicCursor.moveToFirst()) {
             //get columns
             int titleColumn = musicCursor.getColumnIndex
                     (android.provider.MediaStore.Audio.Media.TITLE);
@@ -85,8 +74,7 @@ public class TracklistPresenterImp implements TracklistPresenter
             int albumId = musicCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID);
             int songDurationColumn = musicCursor.getColumnIndex(MediaStore.Audio.Media.DURATION);
             //add songs to list
-            do
-            {
+            do {
                 long thisId = musicCursor.getLong(idColumn);
                 String thisTitle = musicCursor.getString(titleColumn);
                 String thisArtist = musicCursor.getString(artistColumn);
@@ -103,19 +91,15 @@ public class TracklistPresenterImp implements TracklistPresenter
             }
             while (musicCursor.moveToNext());
 
-            if (songsList != null)
-            {
+            if (songsList != null) {
                 listener.onSuccess(songsList);
-            }
-            else listener.onError("error");
+            } else listener.onError("error");
         }
     }
 
     @Override
-    public void bindMusicService(Activity activity, Intent intent)
-    {
-        if(playIntent == null)
-        {
+    public void bindMusicService(Activity activity, Intent intent) {
+        if (playIntent == null) {
             this.playIntent = intent;
 //                playIntent = new Intent(context, MusicService.class);
             activity.bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
@@ -124,51 +108,45 @@ public class TracklistPresenterImp implements TracklistPresenter
     }
 
     @Override
-    public void playTrack(Activity activity, int songIndex)
-    {
+    public void playTrack(Activity activity, int songIndex) {
         musicService.setSong(songIndex);
         musicService.playSong();
     }
+
     @Override
-    public void pauseTrack()
-    {
+    public void pauseTrack() {
         musicService.pausePlayer();
     }
+
     @Override
-    public void resumeTrack()
-    {
+    public void resumeTrack() {
         musicService.go();
     }
 
     @Override
-    public boolean checkIfPlaying()
-    {
+    public boolean checkIfPlaying() {
         return musicService != null && musicService.isPng();
     }
 
     @Override
-    public int getSongDuration()
-    {
+    public int getSongDuration() {
         return musicService.getPosn() / 1000;
     }
 
     @Override
-    public MusicService getMusicService()
-    {
+    public MusicService getMusicService() {
         return musicService;
     }
 
     @Override
-    public void setSongDuration(int progress)
-    {
+    public void setSongDuration(int progress) {
         musicService.changeSongPosition(progress * 1000);
     }
-    private ServiceConnection musicConnection = new ServiceConnection()
-    {
+
+    private ServiceConnection musicConnection = new ServiceConnection() {
         @Override
-        public void onServiceConnected(ComponentName name, IBinder service)
-        {
-            MusicService.MusicBinder binder = (MusicService.MusicBinder)service;
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            MusicService.MusicBinder binder = (MusicService.MusicBinder) service;
             //get service
             musicService = binder.getService();
             //pass list
@@ -179,8 +157,7 @@ public class TracklistPresenterImp implements TracklistPresenter
         }
 
         @Override
-        public void onServiceDisconnected(ComponentName name)
-        {
+        public void onServiceDisconnected(ComponentName name) {
             musicBound = false;
         }
     };

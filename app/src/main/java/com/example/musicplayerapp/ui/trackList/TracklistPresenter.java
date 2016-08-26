@@ -11,26 +11,33 @@ import com.example.musicplayerapp.repository.service.MusicService;
 
 import java.util.ArrayList;
 
-public interface TracklistPresenter
-{
+public interface TracklistPresenter {
     void updateCurrentSongView();
+
     void setSongDuration(int progress);
+
     int getSongDuration();
+
     MusicService getMusicService();
 
     void createMusicService();
+
     void bindMusicService(Activity activity, Intent intent);
+
     void unBindMusicService(Activity activity);
 
-    interface OnListGetListener
-    {
+    interface OnListGetListener {
         void onSuccess(ArrayList<SongObject> songsList);
+
         void onError(String errorString);
     }
+
     void getSongsList(ContentResolver musicResolver, OnListGetListener listener);
 
     void playTrack(Activity activity, int songIndex);
+
     void pauseTrack();
+
     void resumeTrack();
 
     boolean checkIfPlaying();

@@ -4,8 +4,7 @@ import android.content.ContentUris;
 import android.graphics.Bitmap;
 import android.net.Uri;
 
-public class SongObject
-{
+public class SongObject {
     long id;
     String artist;
     String title;
@@ -13,8 +12,7 @@ public class SongObject
     long duration;
     Uri artUri;
 
-    public SongObject(long id, String artist, String title, String album, long duration, Uri artUri)
-    {
+    public SongObject(long id, String artist, String title, String album, long duration, Uri artUri) {
         this.id = id;
         this.artist = artist;
         this.title = title;
@@ -23,28 +21,27 @@ public class SongObject
         this.artUri = artUri;
     }
 
-    public long getId()
-    {
+    public long getId() {
         return id;
     }
-    public String getArtist()
-    {
+
+    public String getArtist() {
         return artist;
     }
-    public String getTitle()
-    {
+
+    public String getTitle() {
         return title;
     }
-    public String getAlbum()
-    {
+
+    public String getAlbum() {
         return album;
     }
-    public long getDuration()
-    {
+
+    public long getDuration() {
         return duration;
     }
-    public Uri getArtUri()
-    {
+
+    public Uri getArtUri() {
         return artUri;
     }
 

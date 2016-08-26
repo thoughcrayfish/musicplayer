@@ -20,16 +20,18 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class TracklistAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
-{
-    public class TracklistViewHolder extends RecyclerView.ViewHolder
-    {
-        @BindView(R.id.textView_song_title) TextView songView;
-        @BindView(R.id.textView_song_artist) TextView artistView;
-        @BindView(R.id.textView_song_duration) TextView durationView;
-        @BindView(R.id.imageView_songItem)ImageView trackAlbumArt;
-        public TracklistViewHolder(View songItem)
-        {
+public class TracklistAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    public class TracklistViewHolder extends RecyclerView.ViewHolder {
+        @BindView(R.id.textView_song_title)
+        TextView songView;
+        @BindView(R.id.textView_song_artist)
+        TextView artistView;
+        @BindView(R.id.textView_song_duration)
+        TextView durationView;
+        @BindView(R.id.imageView_songItem)
+        ImageView trackAlbumArt;
+
+        public TracklistViewHolder(View songItem) {
             super(songItem);
             ButterKnife.bind(this, songItem);
         }
@@ -40,16 +42,14 @@ public class TracklistAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private ArrayList<SongObject> songsList;
     private static LayoutInflater songInflater = null;
 
-    public TracklistAdapter(Context c, ArrayList<SongObject> songs)
-    {
-        songsList=songs;
+    public TracklistAdapter(Context c, ArrayList<SongObject> songs) {
+        songsList = songs;
         this.context = c;
         songInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, final int viewType)
-    {
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, final int viewType) {
         View view = songInflater.inflate(R.layout.item_song, parent, false);
         viewHolder = new TracklistViewHolder(view);
 
@@ -57,32 +57,26 @@ public class TracklistAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position)
-    {       try
-            {
-                SongObject currSong = songsList.get(position);
-                viewHolder.songView.setText(currSong.getTitle());
-                viewHolder.artistView.setText(currSong.getArtist());
-                viewHolder.durationView.setText(Utils.musicServiceTimeConverter(currSong.getDuration()));
-                Utils.loadSquarePicture(context, currSong.getArtUri(), viewHolder.trackAlbumArt);
-            }
-            catch (Exception e)
-            {
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
+        try {
+            SongObject currSong = songsList.get(position);
+            viewHolder.songView.setText(currSong.getTitle());
+            viewHolder.artistView.setText(currSong.getArtist());
+            viewHolder.durationView.setText(Utils.musicServiceTimeConverter(currSong.getDuration()));
+            Utils.loadSquarePicture(context, currSong.getArtUri(), viewHolder.trackAlbumArt);
+        } catch (Exception e) {
 
+        }
+        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                EventBus.getDefault().post(new TrackSelectEvent(position));
             }
-            viewHolder.itemView.setOnClickListener(new View.OnClickListener()
-            {
-                @Override
-                public void onClick(View view)
-                {
-                    EventBus.getDefault().post(new TrackSelectEvent(position));
-                }
-            });
+        });
     }
 
     @Override
-    public int getItemCount()
-    {
+    public int getItemCount() {
         return (null != songsList ? songsList.size() : 0);
     }
 }
