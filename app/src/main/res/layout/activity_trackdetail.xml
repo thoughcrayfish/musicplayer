@@ -94,14 +94,13 @@
                 android:src="@drawable/ic_shuffle_white_18dp" />
 
             <ImageButton
-
+                android:src="@drawable/ic_pause_white_36dp"
                 android:id="@+id/imageButton_playerControls_playPause"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
                 android:background="?selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_play_arrow_white_36dp"
                 android:tint="@color/colorAccent"
                 android:tintMode="src_in" />
 

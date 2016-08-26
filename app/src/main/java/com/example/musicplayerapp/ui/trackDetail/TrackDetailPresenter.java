@@ -15,6 +15,8 @@ public interface TrackDetailPresenter
     void toggleShuffle();
 
     void bindMusicService(Activity activity);
+    void unBindMusicService(Activity activity);
+
     MusicService getMusicService();
     int getSongDuration();
     void setSongDuration(Integer progress);

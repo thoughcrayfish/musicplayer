@@ -51,26 +51,26 @@ public class AbstractActivity extends AppCompatActivity
         startActivity(intent);
     }
 
-    protected void animateAlpha(View view)
+    public void animateAlpha(View view)
     {
         animAlpha = AnimationUtils.loadAnimation(this, R.anim.anim_alpha);
         view.startAnimation(animAlpha);
     }
 
-    protected void animateAlpha(View view, long duration)
+    public void animateAlpha(View view, long duration)
     {
         animAlpha = AnimationUtils.loadAnimation(this, R.anim.anim_alpha);
         animAlpha.setDuration(duration * 1000);
         view.startAnimation(animAlpha);
     }
 
-    protected void animateScale(View view)
+    public void animateScale(View view)
     {
         animScale = AnimationUtils.loadAnimation(this, R.anim.anim_scale);
-        view.startAnimation(animAlpha);
+        view.startAnimation(animScale);
     }
 
-    protected void animateScale(View view, long duration)
+    public void animateScale(View view, long duration)
     {
         animScale = AnimationUtils.loadAnimation(this, R.anim.anim_scale);
         animScale.setDuration(duration * 1000);

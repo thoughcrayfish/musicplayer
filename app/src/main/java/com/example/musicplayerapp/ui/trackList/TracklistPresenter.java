@@ -17,14 +17,17 @@ public interface TracklistPresenter
     void setSongDuration(int progress);
     int getSongDuration();
     MusicService getMusicService();
+
     void createMusicService();
+    void bindMusicService(Activity activity, Intent intent);
+    void unBindMusicService(Activity activity);
 
     interface OnListGetListener
     {
         void onSuccess(ArrayList<SongObject> songsList);
         void onError(String errorString);
     }
-    void getSongsList(ContentResolver musicResolver, OnListGetListener listener, Intent playIntent, Activity activity);
+    void getSongsList(ContentResolver musicResolver, OnListGetListener listener);
 
     void playTrack(Activity activity, int songIndex);
     void pauseTrack();

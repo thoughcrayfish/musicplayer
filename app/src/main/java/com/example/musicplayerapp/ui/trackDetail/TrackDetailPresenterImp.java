@@ -31,6 +31,16 @@ public class TrackDetailPresenterImp implements TrackDetailPresenter
         {
             Intent intent = new Intent(activity, MusicService.class);
             activity.bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+//            activity.startService(intent);
+        }
+    }
+
+    @Override
+    public void unBindMusicService(Activity activity)
+    {
+        if (musicService != null)
+        {
+            activity.unbindService(mConnection);
         }
     }
 
@@ -48,11 +58,17 @@ public class TrackDetailPresenterImp implements TrackDetailPresenter
 
     public void updateDetailView()
     {
-        view.showDetailView(musicService.getCurrentSong().getArtist(),
-                            musicService.getCurrentSong().getTitle(),
-                            Utils.musicServiceTimeConverter(musicService.getCurrentSong().getDuration()),
-                            musicService.getCurrentSong().getArtUri());
+        try
+        {
+            view.showDetailView(musicService.getCurrentSong().getArtist(),
+                    musicService.getCurrentSong().getTitle(),
+                    Utils.musicServiceTimeConverter(musicService.getCurrentSong().getDuration()),
+                    musicService.getCurrentSong().getArtUri());
+        }
+        catch (Exception e)
+        {
 
+        }
     }
 
     private ServiceConnection mConnection = new ServiceConnection()
