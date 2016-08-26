@@ -1,0 +1,77 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    android:background="@color/darker_background"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:id="@+id/imageView_notification_albumArt"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
+        android:src="@drawable/mass_effect_cover_small" />
+
+    <LinearLayout
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/imageView_notification_albumArt"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/textView_notification_song_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/song_margin_left"
+            android:gravity="start"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            tools:text="Battle At Eden Prime" />
+
+        <TextView
+            android:id="@+id/textView_notification_song_artist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/song_margin_left"
+            android:gravity="start"
+            android:textSize="18sp"
+            tools:text="Jeremy Soule" />
+
+        <TextView
+            android:id="@+id/textView_notification_song_duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/song_margin_left"
+            android:gravity="start"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            tools:text="05:32" />
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/imageButton_notification_next"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="20dp"
+        android:background="?selectableItemBackgroundBorderless"
+
+        android:src="@drawable/ic_skip_next_white_24dp"
+        android:text="volume" />
+
+    <ImageButton
+        android:id="@+id/imageButton_notification_playPause"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/imageButton_notification_next"
+        android:layout_marginRight="20dp"
+        android:layout_toStartOf="@+id/imageButton_notification_next"
+        android:background="?selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_pause_circle_outline_white_24dp" />
+</RelativeLayout>

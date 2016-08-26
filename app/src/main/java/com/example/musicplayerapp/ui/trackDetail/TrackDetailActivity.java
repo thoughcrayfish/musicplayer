@@ -92,8 +92,13 @@ public class TrackDetailActivity extends AbstractActivity implements TrackDetail
             @Override
             public void run() {
                 if (presenter.getMusicService() != null) {
-                    int mCurrentPosition = presenter.getSongDuration();
-                    musicSeekBar.setProgress(mCurrentPosition);
+                    try {
+                        int mCurrentPosition = presenter.getSongDuration();
+                        musicSeekBar.setProgress(mCurrentPosition);
+                    }
+                    catch (Exception e) {
+
+                    }
                 }
                 handler.postDelayed(this, 400);  // time in miliseconds to update the bar
             }
@@ -101,8 +106,8 @@ public class TrackDetailActivity extends AbstractActivity implements TrackDetail
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onDestroy() {
+        super.onDestroy();
         if (presenter.getMusicService() != null)
             presenter.unBindMusicService(this);
     }

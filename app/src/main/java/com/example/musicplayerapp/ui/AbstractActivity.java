@@ -16,6 +16,7 @@ import android.view.animation.AnimationUtils;
 
 import com.example.musicplayerapp.R;
 import com.example.musicplayerapp.app.Application;
+import com.example.musicplayerapp.ui.Notifications.NotificationPanel;
 import com.example.musicplayerapp.utils.Utils;
 
 /**
@@ -28,9 +29,14 @@ public class AbstractActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         Utils.onActivityCreateSetTheme(this);
         super.onCreate(savedInstanceState);
-
     }
 
+
+
+    protected void showNotification(){
+        new NotificationPanel(this);
+        finish();
+    }
     protected void startActivity(Class activityClass, boolean lockBackAction, Bundle extras) {
         Intent intent = new Intent(this, activityClass);
         if (lockBackAction)

@@ -31,6 +31,7 @@ import com.example.musicplayerapp.events.TrackSelectEvent;
 import com.example.musicplayerapp.repository.model.SongObject;
 import com.example.musicplayerapp.repository.service.MusicService;
 import com.example.musicplayerapp.ui.AbstractActivity;
+import com.example.musicplayerapp.ui.Notifications.NotificationPanel;
 import com.example.musicplayerapp.ui.trackDetail.TrackDetailActivity;
 import com.example.musicplayerapp.utils.Utils;
 import com.futuremind.recyclerviewfastscroll.FastScroller;
@@ -115,12 +116,19 @@ public class TracklistActivity extends AbstractActivity implements TracklistView
             presenter.updateCurrentSongView();
 
         bus.register(this);
+//        showNotification();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         bus.unregister(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        presenter.unBindMusicService(this);
     }
 
     @Subscribe
@@ -157,8 +165,13 @@ public class TracklistActivity extends AbstractActivity implements TracklistView
             @Override
             public void run() {
                 if (presenter.getMusicService() != null) {
-                    int mCurrentPosition = presenter.getSongDuration();
-                    musicSeekBar.setProgress(mCurrentPosition);
+                    try {
+                        int mCurrentPosition = presenter.getSongDuration();
+                        musicSeekBar.setProgress(mCurrentPosition);
+                    }
+                    catch (Exception e) {
+
+                    }
                 }
                 handler.postDelayed(this, 400);  // time in miliseconds to update the bar
             }

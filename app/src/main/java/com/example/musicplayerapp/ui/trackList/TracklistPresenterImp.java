@@ -17,6 +17,8 @@ import com.example.musicplayerapp.repository.model.SongObject;
 import com.example.musicplayerapp.repository.service.MusicService;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class TracklistPresenterImp implements TracklistPresenter {
 
@@ -52,8 +54,7 @@ public class TracklistPresenterImp implements TracklistPresenter {
     @Override
     public void unBindMusicService(Activity activity) {
         if (musicService != null) {
-            Intent intent = new Intent(activity, MusicService.class);
-            musicService.onUnbind(intent);
+            activity.unbindService(musicConnection);
         }
     }
 
@@ -92,6 +93,7 @@ public class TracklistPresenterImp implements TracklistPresenter {
             while (musicCursor.moveToNext());
 
             if (songsList != null) {
+
                 listener.onSuccess(songsList);
             } else listener.onError("error");
         }

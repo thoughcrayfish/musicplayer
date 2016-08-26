@@ -22,9 +22,9 @@ import butterknife.ButterKnife;
 
 public class TracklistAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public class TracklistViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.textView_song_title)
+        @BindView(R.id.textView_notification_song_title)
         TextView songView;
-        @BindView(R.id.textView_song_artist)
+        @BindView(R.id.textView_notification_song_artist)
         TextView artistView;
         @BindView(R.id.textView_song_duration)
         TextView durationView;
