@@ -50,12 +50,27 @@ public class TracklistPresenterImp implements TracklistPresenter {
             musicService = new MusicService();
         }
     }
+    @Override
+    public void bindMusicService(Activity activity, Intent intent) {
+        if (playIntent == null) {
+            this.playIntent = intent;
+            activity.bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
+            activity.startService(playIntent);
+            musicBound = true;
+        }
+    }
 
     @Override
     public void unBindMusicService(Activity activity) {
         if (musicService != null) {
             activity.unbindService(musicConnection);
+            musicBound = false;
         }
+    }
+
+    @Override
+    public boolean getBindingState() {
+        return musicBound;
     }
 
     @Override
@@ -96,16 +111,6 @@ public class TracklistPresenterImp implements TracklistPresenter {
 
                 listener.onSuccess(songsList);
             } else listener.onError("error");
-        }
-    }
-
-    @Override
-    public void bindMusicService(Activity activity, Intent intent) {
-        if (playIntent == null) {
-            this.playIntent = intent;
-//                playIntent = new Intent(context, MusicService.class);
-            activity.bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
-            activity.startService(playIntent);
         }
     }
 

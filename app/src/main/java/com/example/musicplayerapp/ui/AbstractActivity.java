@@ -27,7 +27,6 @@ public class AbstractActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Utils.onActivityCreateSetTheme(this);
         super.onCreate(savedInstanceState);
     }
 

@@ -26,6 +26,8 @@ public interface TracklistPresenter {
 
     void unBindMusicService(Activity activity);
 
+    boolean getBindingState();
+
     interface OnListGetListener {
         void onSuccess(ArrayList<SongObject> songsList);
 

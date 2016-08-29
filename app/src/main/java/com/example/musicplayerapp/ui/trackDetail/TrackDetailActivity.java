@@ -105,13 +105,6 @@ public class TrackDetailActivity extends AbstractActivity implements TrackDetail
         });
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (presenter.getMusicService() != null)
-            presenter.unBindMusicService(this);
-    }
-
     @OnClick({R.id.imageButton_playerControls_playPause, R.id.imageButton_playerControls_next, R.id.imageButton_playerControls_previous, R.id.imageButton_playerControls_back, R.id.imageButton_playerControls_shuffle})
     public void onClick(View view) {
         {

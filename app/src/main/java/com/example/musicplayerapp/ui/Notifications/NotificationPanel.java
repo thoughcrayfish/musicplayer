@@ -16,6 +16,7 @@ public class NotificationPanel {
     private Context ctx;
     private NotificationManager mNotificationManager;
 
+    @SuppressWarnings("deprecation")
     @SuppressLint("NewApi")
     public NotificationPanel(Context ctx) {
         super();
@@ -25,7 +26,7 @@ public class NotificationPanel {
         CharSequence tickerText = "Shortcuts";
         long when = System.currentTimeMillis();
         Notification.Builder builder = new Notification.Builder(ctx);
-        @SuppressWarnings("deprecation")
+
         Notification notification = builder.getNotification();
         notification.when = when;
         notification.tickerText = tickerText;

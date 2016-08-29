@@ -141,7 +141,10 @@ public class MusicService extends Service implements
     }
 
     public void pausePlayer() {
-        player.pause();
+        if (player != null && isPng())
+        {
+            player.pause();
+        }
     }
 
     public void changeSongPosition(int posn) {
@@ -149,7 +152,10 @@ public class MusicService extends Service implements
     }
 
     public void go() {
-        player.start();
+        if (player != null && !isPng())
+        {
+            player.start();
+        }
     }
 
     public void playPrev() {

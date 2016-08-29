@@ -85,6 +85,7 @@ public class TracklistActivity extends AbstractActivity implements TracklistView
         init();
         presenter = new TracklistPresenterImp(this);
         presenter.createMusicService();
+//        showNotification();
     }
 
     private void init() {
@@ -105,30 +106,31 @@ public class TracklistActivity extends AbstractActivity implements TracklistView
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        Intent playIntent = new Intent(context, MusicService.class);
+    protected void onStart() {
+        super.onStart();
+        bindMusicService();
         presenter.getSongsList(getContentResolver(), this);
-        presenter.bindMusicService(this, playIntent);
         setMusicSeekBar();
         checkIfPlaying();
         if (presenter.getMusicService() != null)
             presenter.updateCurrentSongView();
 
+        if (!bus.isRegistered(this))
         bus.register(this);
 //        showNotification();
     }
-
     @Override
-    protected void onPause() {
-        super.onPause();
-        bus.unregister(this);
+    protected void onResume() {
+        super.onResume();
+        bindMusicService();
     }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        presenter.unBindMusicService(this);
+    private void bindMusicService()
+    {
+        if (!presenter.getBindingState())
+        {
+            Intent playIntent = new Intent(context, MusicService.class);
+            presenter.bindMusicService(this, playIntent);
+        }
     }
 
     @Subscribe
