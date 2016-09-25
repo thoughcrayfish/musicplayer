@@ -1,9 +1,8 @@
 package com.example.musicplayerapp.ui;
 
-/**
- * Created by Crayfish on 24/09/16.
- */
+import android.support.v4.app.FragmentActivity;
 
-public class AbstractFragmentActivity
+
+public class AbstractFragmentActivity extends FragmentActivity
 {
 }

@@ -49,6 +49,7 @@ public class TracklistPresenterImp implements TracklistPresenter {
         if (musicService == null) {
             musicService = new MusicService();
         }
+        musicService.pausePlayer();
     }
     @Override
     public void bindMusicService(Activity activity, Intent intent) {

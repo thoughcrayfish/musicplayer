@@ -1,4 +1,4 @@
-package com.example.musicplayerapp.ui.Notifications;
+package com.example.musicplayerapp.ui.notifications;
 
 import android.annotation.SuppressLint;
 import android.app.Notification;
@@ -6,7 +6,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v4.app.NotificationCompat;
 import android.widget.RemoteViews;
 
 import com.example.musicplayerapp.R;

@@ -1,13 +1,10 @@
 package com.example.musicplayerapp.ui;
 
 import android.annotation.TargetApi;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Window;
@@ -15,9 +12,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
 import com.example.musicplayerapp.R;
-import com.example.musicplayerapp.app.Application;
-import com.example.musicplayerapp.ui.Notifications.NotificationPanel;
-import com.example.musicplayerapp.utils.Utils;
+import com.example.musicplayerapp.ui.notifications.NotificationPanel;
 
 /**
  * Created by Андрей on 12.08.2016.

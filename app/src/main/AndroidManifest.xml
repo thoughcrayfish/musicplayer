@@ -4,6 +4,7 @@
     package="com.example.musicplayerapp">
 
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
@@ -14,6 +15,14 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <service android:name=".repository.service.MusicService" />
+
+        <activity android:name=".ui.tutorial.IntroActivity">
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+        </activity>
 
         <activity
             android:name=".ui.trackDetail.TrackDetailActivity"
@@ -32,14 +41,10 @@
             android:name=".ui.trackList.TracklistActivity"
             android:label="@string/title_activity_tracklist"
             android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
-        <activity android:name=".ui.Notifications.NotificationReturnSlot"
+        <activity android:name=".ui.notifications.NotificationReturnSlot"
             android:launchMode="singleTask"
             android:taskAffinity=""
             android:excludeFromRecents="true"/>

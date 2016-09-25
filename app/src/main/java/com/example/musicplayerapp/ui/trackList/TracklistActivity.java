@@ -2,9 +2,11 @@ package com.example.musicplayerapp.ui.trackList;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.v7.widget.LinearLayoutManager;
 
 import android.support.v7.widget.RecyclerView;
@@ -24,15 +26,14 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.example.musicplayerapp.R;
 import com.example.musicplayerapp.adapters.TracklistAdapter;
 import com.example.musicplayerapp.events.TrackSelectEvent;
 import com.example.musicplayerapp.repository.model.SongObject;
 import com.example.musicplayerapp.repository.service.MusicService;
 import com.example.musicplayerapp.ui.AbstractActivity;
-import com.example.musicplayerapp.ui.Notifications.NotificationPanel;
 import com.example.musicplayerapp.ui.trackDetail.TrackDetailActivity;
+import com.example.musicplayerapp.ui.tutorial.IntroActivity;
 import com.example.musicplayerapp.utils.Utils;
 import com.futuremind.recyclerviewfastscroll.FastScroller;
 
@@ -83,6 +84,7 @@ public class TracklistActivity extends AbstractActivity implements TracklistView
         setContentView(R.layout.activity_tracklist);
         ButterKnife.bind(this);
         init();
+
         presenter = new TracklistPresenterImp(this);
         presenter.createMusicService();
 //        showNotification();

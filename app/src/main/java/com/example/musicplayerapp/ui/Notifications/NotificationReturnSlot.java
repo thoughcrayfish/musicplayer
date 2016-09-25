@@ -1,4 +1,4 @@
-package com.example.musicplayerapp.ui.Notifications;
+package com.example.musicplayerapp.ui.notifications;
 
 import android.app.Activity;
 import android.os.Bundle;
